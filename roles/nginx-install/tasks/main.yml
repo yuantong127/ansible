@@ -1,0 +1,84 @@
+---
+- name: add user nginx
+  user:
+    name: nginx
+
+- name: install dependent packages
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - automake
+    - gcc
+    - openssl-devel
+    - pcre-devel
+    - zlib-devel
+
+- name: copy and unarchive nginx-1.12.1.tar.gz
+  unarchive:
+    src: nginx-1.12.1.tar.gz
+    dest: /App/src
+
+- name: configure
+  command: ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_stub_status_module
+  args:
+    chdir: /App/src/nginx-1.12.1
+
+- name: make
+  make:
+    chdir: /App/src/nginx-1.12.1
+
+- name: make install
+  make:
+    chdir: /App/src/nginx-1.12.1
+    target: install
+
+- name: edit /etc/profile
+  lineinfile:
+    path: /etc/profile
+    insertafter: EOF
+    line: "\n# nginx\nexport PATH=/usr/local/nginx/sbin:$PATH"
+
+- name: link /etc/nginx
+  file:
+    src: /usr/local/nginx/conf
+    dest: /etc/nginx
+    state: link
+
+- name: copy /etc/nginx/nginx.conf
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: make directory /etc/nginx/conf.d
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+
+- name: copy /etc/nginx/conf.d/www.example.com.conf.demo
+  copy:
+    src: www.example.com.conf.demo
+    dest: /etc/nginx/conf.d/www.example.com.conf.demo
+
+- name: make directory /var/log/nginx
+  file:
+    path: /var/log/nginx
+    state: directory
+    owner: nginx
+    group: nginx
+
+- name: copy /etc/init.d/nginxd
+  copy:
+    src: nginxd
+    dest: /etc/init.d/nginxd
+    mode: 0755
+
+- name: enable service nginxd
+  service:
+    name: nginxd
+    enabled: yes
+
+- name: restart service nginxd
+  service:
+    name: nginxd
+    state: restarted

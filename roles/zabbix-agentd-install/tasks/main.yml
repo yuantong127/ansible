@@ -1,0 +1,32 @@
+---
+- name: add user zabbix
+  user:
+    name: zabbix
+
+- name: copy /etc/zabbix_agentd.conf
+  copy:
+    src: zabbix_agentd.conf
+    dest: /etc/zabbix_agentd.conf
+  notify:
+    - zabbix_agentd restart
+
+- name: copy /usr/local/sbin/zabbix_agentd
+  copy:
+    src: zabbix_agentd.bin
+    dest: /usr/local/sbin/zabbix_agentd
+    mode: 0755
+  notify:
+    - zabbix_agentd restart
+
+- name: copy /etc/init.d/zabbix_agentd
+  copy:
+    src: zabbix_agentd.init
+    dest: /etc/init.d/zabbix_agentd
+    mode: 0755
+  notify:
+    - zabbix_agentd restart
+
+- name: enable serveice zabbix_agentd
+  service:
+    name: zabbix_agentd
+    enabled: yes

@@ -1,0 +1,8 @@
+---
+- hosts: tmp
+  roles:
+    - centos-os-init
+    - zabbix-agentd-install
+  tasks:
+    - name: reboot
+      shell: init 6

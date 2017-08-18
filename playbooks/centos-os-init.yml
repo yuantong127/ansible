@@ -1,0 +1,7 @@
+---
+- hosts: tmp
+  roles:
+    - centos-os-init
+  tasks:
+    - name: reboot
+      shell: init 6
