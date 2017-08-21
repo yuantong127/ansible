@@ -17,7 +17,7 @@
     src: zabbix_agentd.conf.aliyun
     dest: /etc/zabbix_agentd.conf
   when:
-    ansible_env.SSH_CLIENT | search("192.168.25.165")
+    ansible_env.SSH_CLIENT | search("10.172.192.92")
   notify:
     - zabbix_agentd restart
 
@@ -26,7 +26,7 @@
     src: zabbix_agentd.conf.jushita
     dest: /etc/zabbix_agentd.conf
   when:
-    ansible_env.SSH_CLIENT | search("101.37.75.177")
+    ansible_env.SSH_CLIENT | search"10.26.114.77")
   notify:
     - zabbix_agentd restart
 
