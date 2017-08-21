@@ -23,32 +23,14 @@
     name: libselinux-python
     state: latest
 
-- name: install ntpdate
-  yum:
-    name: ntpdate
-    state: latest
-
-- name: set DNS
-  copy:
-    src: resolv.conf
-    dest: /etc/resolv.conf
-
 - name: disabled SELinux
   selinux:
     state: disabled
-
-- name: sync time
-  shell: /usr/sbin/ntpdate cn.pool.ntp.org && hwclock --systohc
-
-- name: add crontab(sync time)
-  cron:
-    backup: yes
-    minute: 0
-    hour: 3
-    name: sync time
-    job: /usr/sbin/ntpdate cn.pool.ntp.org && hwclock --systohc
 
 - name: upgrade all packages
   yum:
     name: '*'
     state: latest
+
+- include: patch-local.yml
+  when: ansible_env.SSH_CLIENT | search("192.168.25.165")
