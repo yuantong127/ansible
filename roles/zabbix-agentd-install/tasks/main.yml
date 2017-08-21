@@ -3,10 +3,30 @@
   user:
     name: zabbix
 
-- name: copy /etc/zabbix_agentd.conf
+- name: copy /etc/zabbix_agentd.conf (local)
   copy:
-    src: zabbix_agentd.conf
+    src: zabbix_agentd.conf.local
     dest: /etc/zabbix_agentd.conf
+  when:
+    ansible_env.SSH_CLIENT | search("192.168.25.165")
+  notify:
+    - zabbix_agentd restart
+
+- name: copy /etc/zabbix_agentd.conf (aliyun)
+  copy:
+    src: zabbix_agentd.conf.aliyun
+    dest: /etc/zabbix_agentd.conf
+  when:
+    ansible_env.SSH_CLIENT | search("192.168.25.165")
+  notify:
+    - zabbix_agentd restart
+
+- name: copy /etc/zabbix_agentd.conf (jushita)
+  copy:
+    src: zabbix_agentd.conf.local.jushita
+    dest: /etc/zabbix_agentd.conf
+  when:
+    ansible_env.SSH_CLIENT | search("10.26.114.77")
   notify:
     - zabbix_agentd restart
 
