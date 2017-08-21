@@ -1,0 +1,20 @@
+- name: set DNS
+  copy:
+    src: resolv.conf
+    dest: /etc/resolv.conf
+
+- name: install ntpdate
+  yum:
+    name: ntpdate
+    state: latest
+
+- name: sync time
+  shell: /usr/sbin/ntpdate cn.pool.ntp.org && hwclock --systohc
+
+- name: add crontab(sync time)
+  cron:
+    backup: yes
+    minute: 0
+    hour: 3
+    name: sync time
+    job: /usr/sbin/ntpdate cn.pool.ntp.org && hwclock --systohc
