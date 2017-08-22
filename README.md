@@ -1,10 +1,15 @@
 ## Ansible共享文件
-- 推送本地到远端
+- 进入目录
 ```
-# git push
+# cd /data/ansible/
 ```
 
-- 拉取远端到本地
+- 远端同步到本地
 ```
 # git pull
+```
+
+- 本地推送到远端
+```
+# git push
 ```
