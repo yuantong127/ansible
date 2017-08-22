@@ -1,0 +1,62 @@
+---
+- name: copy and unarchive redis-4.0.1.tar.gz
+  unarchive:
+    src: redis-4.0.1.tar.gz
+    dest: /App/src
+
+- name: move to /usr/local/redis
+  command: mv /App/src/redis-4.0.1 /usr/local/redis
+
+- name: make
+  make:
+    chdir: /usr/local/redis
+
+- name: edit /etc/profile
+  lineinfile:
+    path: /etc/profile
+    insertafter: EOF
+    line: "\n# redis\nexport PATH=/usr/local/redis/src:$PATH"
+
+- name: link /etc/redis.conf
+  file:
+    src: /usr/local/redis/redis.conf
+    dest: /etc/redis.conf
+    state: link
+
+- name: edit /etc/redis.conf
+  lineinfile:
+    path: /etc/redis.conf
+    regexp: "^bind " 
+    line: "bind 0.0.0.0"
+
+- name: edit /etc/redis.conf
+  lineinfile:
+    path: /etc/redis.conf
+    regexp: "^daemonize " 
+    line: "daemonize yes"
+
+- name: edit /etc/redis.conf
+  lineinfile:
+    path: /etc/redis.conf
+    regexp: "^dir" 
+    line: "dir /data/redis"
+
+- name: edit /etc/redis.conf
+  lineinfile:
+    path: /etc/redis.conf
+    regexp: "requirepass" 
+    line: "requirepass 123456"
+
+- name: make directory /data/redis
+  file:
+    path: /data/redis
+    state: directory
+
+- name: edit /etc/rc.local
+  lineinfile:
+    path: /etc/rc.local
+    insertafter: EOF
+    line: "\n# redis\n/usr/local/redis/src/redis-server /etc/redis.conf"
+
+- name: start redis
+  command: /usr/local/redis/src/redis-server /etc/redis.conf
