@@ -1,11 +1,11 @@
 ---
-- name: copy and unarchive redis-4.0.1.tar.gz
+- name: copy and unarchive redis-{{redis_version}}.tar.gz
   unarchive:
-    src: redis-4.0.1.tar.gz
+    src: redis-{{redis_version}}.tar.gz
     dest: /App/src
 
 - name: move to /usr/local/redis
-  command: mv /App/src/redis-4.0.1 /usr/local/redis
+  command: mv /App/src/redis-{{redis_version}} /usr/local/redis
 
 - name: make
   make:
