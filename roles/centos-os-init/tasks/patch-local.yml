@@ -1,4 +1,4 @@
-- name: set DNS
+- name: copy /etc/resolv.conf
   copy:
     src: resolv.conf
     dest: /etc/resolv.conf

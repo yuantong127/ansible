@@ -1,3 +1,20 @@
+---
+- include_vars: /etc/ansible/vars/main.yml
+
+- name: set hostname
+  hostname:
+    name: "{{inventory_hostname}}"
+
+- name: install libselinux-python
+  yum:
+    name: libselinux-python
+    state: latest
+
+- name: install vim
+  yum:
+    name: vim
+    state: latest
+
 - name: create /Apy/src
   file:
     path: /App/src
@@ -13,19 +30,77 @@
     path: /data
     state: directory
 
-- name: install vim
-  yum:
-    name: vim
-    state: latest
-
-- name: install libselinux-python
-  yum:
-    name: libselinux-python
-    state: latest
-
 - name: disabled SELinux
   selinux:
     state: disabled
+
+- name: edit /etc/sysctl.conf
+  blockinfile:
+    path: /etc/sysctl.conf
+    block: |
+      net.core.rmem_default = 262144
+      net.core.rmem_max = 16777216
+      net.core.wmem_default = 262144
+      net.core.wmem_max = 16777216
+      net.core.somaxconn = 262144
+      net.core.netdev_max_backlog = 262144
+      net.ipv4.tcp_max_orphans = 262144
+      net.ipv4.tcp_max_syn_backlog = 262144
+      net.ipv4.tcp_max_tw_buckets = 10000
+      net.ipv4.ip_local_port_range = 1024 65500
+      net.ipv4.tcp_tw_recycle = 1
+      net.ipv4.tcp_tw_reuse = 1
+      net.ipv4.tcp_syncookies = 1
+      net.ipv4.tcp_synack_retries = 1
+      net.ipv4.tcp_syn_retries = 1
+      net.ipv4.tcp_fin_timeout = 30
+      net.ipv4.tcp_keepalive_time = 1200
+      net.ipv4.tcp_mem = 786432 1048576 1572864
+      fs.aio-max-nr = 1048576
+      fs.file-max = 6815744
+      kernel.sem = 250 32000 100 128
+  notify:
+    sysctl reload
+
+- name: edit /etc/security/limits.d/90-nproc.conf
+  replace:
+    path: /etc/security/limits.d/90-nproc.conf
+    regexp: " 1024$"
+    replace: " 102400"
+
+- name: edit /etc/security/limits.conf
+  blockinfile:
+    path: /etc/security/limits.conf
+    block: |
+      * soft nofile 60000
+      * hard nofile 65536
+      * soft nproc  30000
+      * hard nproc  32768
+      * soft stack  30000
+      * hard stack  32768
+
+- name: edit /etc/ssh/sshd_config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "UseDNS "
+    line: "UseDNS no"
+  notify:
+    sshd restart
+
+- name: edit /etc/ssh/sshd_config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "GSSAPIAuthentication "
+    line: "GSSAPIAuthentication no"
+  notify:
+    sshd restart
+
+- name: edit /etc/profile
+  blockinfile:
+    path: /etc/profile
+    block: |
+      alias grep='grep --color=auto'
+      export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S"
 
 - name: upgrade all packages
   yum:
@@ -33,4 +108,10 @@
     state: latest
 
 - include: patch-local.yml
-  when: ansible_env.SSH_CLIENT | search("192.168.25.165")
+  when: host_location == "local"
+
+- include: patch-aliyun.yml
+  when: host_location == "aliyun"
+
+- include: patch-jushita.yml
+  when: host_location == "jushita"

@@ -1,5 +1,5 @@
 ---
-- include_vars: /etc/ansible/vars/zabbix.yml
+- include_vars: /etc/ansible/vars/main.yml
 
 - name: add user zabbix
   user:

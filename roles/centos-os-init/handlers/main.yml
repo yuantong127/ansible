@@ -1,0 +1,8 @@
+---
+- name: sshd restart
+  service:
+    name: sshd
+    state: restarted
+
+- name: sysctl reload
+  command: sysctl -p
