@@ -1,0 +1,19 @@
+---
+- name: install fping
+  yum:
+    name: fping
+    state: present
+
+- name: copy /App/script/zabbix-thrift.py
+  copy:
+    src: zabbix-thrift.py
+    dest: /App/script/zabbix-thrift.py
+    mode: 0755
+  notify:
+    - zabbix-thrift.py restart
+
+- name: copy /App/script/zabbix-thrift.sh
+  copy:
+    src: zabbix-thrift.sh
+    dest: /App/script/zabbix-thrift.sh
+    mode: 0755
