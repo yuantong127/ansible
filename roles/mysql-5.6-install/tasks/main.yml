@@ -1,0 +1,122 @@
+---
+- name: add user mysql
+  user:
+    name: mysql
+
+- name: install dependent packages
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - autoconf
+    - automake
+    - cmake
+    - gcc-c++
+    - libgcrypt
+    - libtool
+    - libxml2
+    - ncurses-devel
+    - zlib
+
+- name: copy and unarchive mysql-{{mysql_version}}.tar.gz
+  unarchive:
+    src: mysql-{{mysql_version}}.tar.gz
+    dest: /App/src
+
+- name: configure
+  command: |
+    cmake \
+    -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+    -DDEFAULT_CHARSET=utf8 \
+    -DDEFAULT_COLLATION=utf8_general_ci \
+    -DENABLED_LOCAL_INFILE=1 \
+    -DMYSQL_DATADIR=/data/mysql/data \
+    -DSYSCONFDIR=/etc \
+    -DWITH_PARTITION_STORAGE_ENGINE=1
+  args:
+    chdir: /App/src/mysql-{{mysql_version}}
+
+- name: make
+  make:
+    chdir: /App/src/mysql-{{mysql_version}}
+
+- name: make install
+  make:
+    chdir: /App/src/mysql-{{mysql_version}}
+    target: install
+
+- name: edit /etc/profile
+  blockinfile:
+    path: /etc/profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: mysql"
+    block: export PATH=/usr/local/mysql/bin:$PATH
+
+- name: make directory /data/mysql/data
+  file:
+    path: /data/mysql/data
+    state: directory
+
+- name: make directory /data/mysql/log
+  file:
+    path: /data/mysql/log
+    state: directory
+
+- name: make directory /data/mysql/log-bin
+  file:
+    path: /data/mysql/log-bin
+    state: directory
+
+- name: make directory /data/mysql/tmp
+  file:
+    path: /data/mysql/tmp
+    state: directory
+
+- name: change owner and group of /data/mysql
+  file:
+    path: /data/mysql
+    state: directory
+    owner: mysql
+    group: mysql
+    recurse: yes
+
+- name: make directory /var/lib/mysql
+  file:
+    path: /var/lib/mysql
+    state: directory
+    owner: mysql
+    group: mysql
+
+- name: change owner and group of /usr/local/mysql
+  file:
+    path: /usr/local/mysql
+    state: directory
+    owner: mysql
+    group: mysql
+    recurse: yes
+
+- name: execute /usr/local/mysql/scripts/mysql_install_db
+  command: ./scripts/mysql_install_db --user=mysql --datadir=/data/mysql/data
+  args:
+    chdir: /usr/local/mysql
+
+- name: copy /etc/my.cnf
+  copy:
+    src: my.cnf
+    dest: /etc/my.cnf
+
+- name: copy /etc/init.d/mysqld
+  copy: 
+    remote_src: True
+    src: /usr/local/mysql/support-files/mysql.server
+    dest: /etc/init.d/mysqld
+    mode: 0644
+
+- name: enable service mysqld
+  service:
+    name: mysqld
+    enabled: yes
+
+- name: restart service mysqld
+  service:
+    name: mysqld
+    state: restarted

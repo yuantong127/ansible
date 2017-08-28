@@ -1,6 +1,9 @@
 ---
 - include_vars: /etc/ansible/vars/main.yml
 
+- include: patch-local-pre.yml
+  when: host_location == "local"
+
 - name: set hostname
   hostname:
     name: "{{inventory_hostname}}"
@@ -37,6 +40,7 @@
 - name: edit /etc/sysctl.conf
   blockinfile:
     path: /etc/sysctl.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: os init"
     block: |
       net.core.rmem_default = 262144
       net.core.rmem_max = 16777216
@@ -71,6 +75,7 @@
 - name: edit /etc/security/limits.conf
   blockinfile:
     path: /etc/security/limits.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: os init"
     block: |
       * soft nofile 60000
       * hard nofile 65536
@@ -98,6 +103,7 @@
 - name: edit /etc/profile
   blockinfile:
     path: /etc/profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: os init"
     block: |
       alias grep='grep --color=auto'
       export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S"
@@ -107,11 +113,11 @@
     name: '*'
     state: latest
 
-- include: patch-local.yml
-  when: host_location == "local"
-
 - include: patch-aliyun.yml
   when: host_location == "aliyun"
 
 - include: patch-jushita.yml
   when: host_location == "jushita"
+
+- include: patch-local.yml
+  when: host_location == "local"
