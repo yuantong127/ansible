@@ -130,10 +130,10 @@
 
 - name: generate random password
   shell: openssl rand 32 -base64 | head -c 16
-  register: mysql_password
+  register: random_password
 
-- name: set password for mysql user root!!! Password --> {{ mysql_password.stdout }}
+- name: set password for mysql user root !!! Password --> {{ random_password.stdout }}
   mysql_user:
     name: root
     host_all: yes
-    password: "{{ mysql_password.stdout }}"
+    password: "{{ random_password.stdout }}"
