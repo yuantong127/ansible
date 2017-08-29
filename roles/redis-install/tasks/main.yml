@@ -12,10 +12,10 @@
     chdir: /usr/local/redis
 
 - name: edit /etc/profile
-  lineinfile:
+  blockinfile:
     path: /etc/profile
-    insertafter: EOF
-    line: "\n# redis\nexport PATH=/usr/local/redis/src:$PATH"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: redis"
+    block: export PATH=/usr/local/redis/src:$PATH
 
 - name: link /etc/redis.conf
   file:
@@ -23,29 +23,33 @@
     dest: /etc/redis.conf
     state: link
 
-- name: edit /etc/redis.conf
+- name: edit /etc/redis.conf --> set "bind 0.0.0.0"
   lineinfile:
     path: /etc/redis.conf
     regexp: "^bind " 
     line: "bind 0.0.0.0"
 
-- name: edit /etc/redis.conf
+- name: edit /etc/redis.conf --> set "daemonize yes"
   lineinfile:
     path: /etc/redis.conf
     regexp: "^daemonize " 
     line: "daemonize yes"
 
-- name: edit /etc/redis.conf
+- name: edit /etc/redis.conf --> set "dir /data/redis"
   lineinfile:
     path: /etc/redis.conf
     regexp: "^dir" 
     line: "dir /data/redis"
 
-- name: edit /etc/redis.conf
+- name: generate random password
+  shell: openssl rand 32 -base64 | head -c 16
+  register: random_password
+
+- name: edit /etc/redis.conf !!! --> set "requirepass {{ random_password.stdout }}"
   lineinfile:
     path: /etc/redis.conf
     regexp: "requirepass" 
-    line: "requirepass 123456"
+    line: "requirepass {{ random_password.stdout }}"
 
 - name: make directory /data/redis
   file:
@@ -53,10 +57,10 @@
     state: directory
 
 - name: edit /etc/rc.local
-  lineinfile:
+  blockinfile:
     path: /etc/rc.local
-    insertafter: EOF
-    line: "\n# redis\n/usr/local/redis/src/redis-server /etc/redis.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: redis"
+    block: "/usr/local/redis/src/redis-server /etc/redis.conf"
 
 - name: start redis
   command: /usr/local/redis/src/redis-server /etc/redis.conf
