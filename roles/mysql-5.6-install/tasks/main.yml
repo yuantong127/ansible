@@ -5,7 +5,7 @@
 
 - name: install dependent packages
   yum:
-    name: '{{ item }}'
+    name: "{{ item }}"
     state: present
   with_items:
     - autoconf
@@ -51,65 +51,50 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK: mysql"
     block: export PATH=/usr/local/mysql/bin:$PATH
 
-- name: make directory /data/mysql/data
-  file:
-    path: /data/mysql/data
-    state: directory
+- name: copy /etc/my.cnf
+  copy:
+    src: my.cnf
+    dest: /etc/my.cnf
 
-- name: make directory /data/mysql/log
+- name: create directory
   file:
-    path: /data/mysql/log
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - /data/mysql/data
+    - /data/mysql/log
+    - /data/mysql/log-bin
+    - /data/mysql/tmp
+    - /var/lib/mysql
 
-- name: make directory /data/mysql/log-bin
+- name: create file
   file:
-    path: /data/mysql/log-bin
-    state: directory
+    path: /data/mysql/log/mysql.err
+    state: touch
 
-- name: make directory /data/mysql/tmp
+- name: change owner and group
   file:
-    path: /data/mysql/tmp
-    state: directory
-
-- name: change owner and group of /data/mysql
-  file:
-    path: /data/mysql
+    path: "{{ item }}"
     state: directory
     owner: mysql
     group: mysql
     recurse: yes
-
-- name: make directory /var/lib/mysql
-  file:
-    path: /var/lib/mysql
-    state: directory
-    owner: mysql
-    group: mysql
-
-- name: change owner and group of /usr/local/mysql
-  file:
-    path: /usr/local/mysql
-    state: directory
-    owner: mysql
-    group: mysql
-    recurse: yes
+  with_items:
+    - /data/mysql
+    - /var/lib/mysql
+    - /usr/local/mysql
 
 - name: execute /usr/local/mysql/scripts/mysql_install_db
   command: ./scripts/mysql_install_db --user=mysql --datadir=/data/mysql/data
   args:
     chdir: /usr/local/mysql
 
-- name: copy /etc/my.cnf
-  copy:
-    src: my.cnf
-    dest: /etc/my.cnf
-
 - name: copy /etc/init.d/mysqld
   copy: 
     remote_src: True
     src: /usr/local/mysql/support-files/mysql.server
     dest: /etc/init.d/mysqld
-    mode: 0644
+    mode: 0755
 
 - name: enable service mysqld
   service:
@@ -120,3 +105,35 @@
   service:
     name: mysqld
     state: restarted
+
+- name: install MySQL-python
+  yum:
+    name: MySQL-python
+    state: present
+
+- name: remove mysql database test
+  mysql_db:
+    name: test
+    state: absent
+
+- name: remove mysql user anonymous
+  mysql_user:
+    name: ""
+    host_all: yes
+    state: absent
+
+- name: create mysql user 'root'@'%'
+  mysql_user:
+    name: root
+    host: "%"
+    priv: "*.*:ALL"
+
+- name: generate random password
+  shell: openssl rand 32 -base64 | head -c 16
+  register: mysql_password
+
+- name: set password for mysql user root!!! Password --> {{ mysql_password.stdout }}
+  mysql_user:
+    name: root
+    host_all: yes
+    password: "{{ mysql_password.stdout }}"
