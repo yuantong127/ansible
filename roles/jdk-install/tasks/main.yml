@@ -5,7 +5,7 @@
     dest: /App/src
 
 - name: move to /usr/local/jdk
-  command: mv /App/src/jdk-{{jdk_version}} /usr/local/jdk
+  command: mv /App/src/jdk{{jdk_version}} /usr/local/jdk
 
 - name: edit /etc/profile
   blockinfile:
