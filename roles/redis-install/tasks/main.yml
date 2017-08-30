@@ -23,19 +23,19 @@
     dest: /etc/redis.conf
     state: link
 
-- name: edit /etc/redis.conf --> set "bind 0.0.0.0"
+- name: edit /etc/redis.conf
   lineinfile:
     path: /etc/redis.conf
     regexp: "^bind " 
     line: "bind 0.0.0.0"
 
-- name: edit /etc/redis.conf --> set "daemonize yes"
+- name: edit /etc/redis.conf
   lineinfile:
     path: /etc/redis.conf
     regexp: "^daemonize " 
     line: "daemonize yes"
 
-- name: edit /etc/redis.conf --> set "dir /data/redis"
+- name: edit /etc/redis.conf
   lineinfile:
     path: /etc/redis.conf
     regexp: "^dir" 
@@ -45,7 +45,7 @@
   shell: openssl rand 32 -base64 | head -c 16
   register: random_password
 
-- name: edit /etc/redis.conf !!! --> set "requirepass {{ random_password.stdout }}"
+- name: edit /etc/redis.conf
   lineinfile:
     path: /etc/redis.conf
     regexp: "requirepass" 
@@ -64,3 +64,7 @@
 
 - name: start redis
   command: /usr/local/redis/src/redis-server /etc/redis.conf
+
+- name: "print password !!!"
+  debug:
+    msg: "redis password : {{ random_password.stdout }}"

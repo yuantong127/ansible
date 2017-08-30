@@ -132,8 +132,12 @@
   shell: openssl rand 32 -base64 | head -c 16
   register: random_password
 
-- name: set password for mysql user root !!! Password --> {{ random_password.stdout }}
+- name: set password for mysql user root
   mysql_user:
     name: root
     host_all: yes
     password: "{{ random_password.stdout }}"
+
+- name: "print password !!!"
+  debug:
+    msg: "mysql user root password : {{ random_password.stdout }}"
