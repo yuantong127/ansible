@@ -1,0 +1,13 @@
+---
+- name: copy and unarchive apache-tomcat-{{tomcat_version}}.tar.gz
+  unarchive:
+    src: apache-tomcat-{{tomcat_version}}.tar.gz
+    dest: /App/src
+
+- name: create directory /App/tomcat
+  file:
+    path: /App/tomcat
+    state: directory
+
+- name: move tomcat to /App/tomcat/example
+  command: mv /App/src/apache-tomcat-{{tomcat_version}} /App/tomcat/example
