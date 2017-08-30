@@ -11,3 +11,19 @@
 
 - name: move tomcat to /App/tomcat/example
   command: mv /App/src/apache-tomcat-{{tomcat_version}} /App/tomcat/example
+
+- name: clean directory /App/tomcat/example/webapps
+  file:
+    path: "/App/tomcat/example/webapps/{{ item }}"
+    state: absent
+  with_items:
+    - docs
+    - examples
+    - host-manager
+    - manager
+    - ROOT
+
+- name: copy /App/tomcat/example/conf/server.xml
+  copy:
+    src: server.xml
+    dest: /App/tomcat/example/conf/server.xml
