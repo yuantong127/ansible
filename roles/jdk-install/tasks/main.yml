@@ -1,7 +1,7 @@
 ---
 - name: copy and unarchive jdk-{{jdk_version_tar}}.tar.gz
   unarchive:
-    src: jdk-{{jdk_version_tar}}.tar.gz
+    src: /etc/ansible/files/jdk-{{jdk_version_tar}}.tar.gz
     dest: /App/src
 
 - name: move to /usr/local/jdk
