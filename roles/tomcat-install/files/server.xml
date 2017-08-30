@@ -10,7 +10,7 @@
     <Executor name="tomcatThreadPool"
               namePrefix="catalina-exec-"
               maxThreads="800"
-              minSpareThreads="400"/>
+              minSpareThreads="400" />
 
     <Connector executor="tomcatThreadPool"
                port="8080"
@@ -23,7 +23,7 @@
                enableLookups="false"
                maxHttpHeaderSize="8192"
                useBodyEncodingForURI="true"
-               URIEncoding="UTF-8"/>
+               URIEncoding="UTF-8" />
 
     <Engine name="Catalina"
             defaultHost="localhost">
@@ -36,8 +36,7 @@
         <Context path="/demo"
                  docBase="/App/tomcat/example/webapps/demo"
                  debug="0"
-                 privileged="true">
-        </Context>
+                 privileged="true" />
 
         <Valve className="org.apache.catalina.valves.AccessLogValve"
                directory="logs"
