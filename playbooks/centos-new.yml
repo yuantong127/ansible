@@ -3,6 +3,6 @@
   roles:
     - centos-os-init
     - zabbix-agentd-install
-  tasks:
+  post_tasks:
     - name: reboot
       shell: init 6
