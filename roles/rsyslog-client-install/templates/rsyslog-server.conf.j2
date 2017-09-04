@@ -1,0 +1,20 @@
+module(load="imfile" PollingInterval="5")
+local0.* @@{{rsyslog_server_hostname}}:514
+
+input(type="imfile"
+      File="/App/tomcat/example/logs/catalina.*.log"
+      Tag="tomcat+example+catalina.log"
+      Severity="info"
+      Facility="local0")
+
+input(type="imfile"
+      File="/App/tomcat/example/logs/catalina.out"
+      Tag="tomcat+example+catalina.out"
+      Severity="info"
+      Facility="local0")
+
+input(type="imfile"
+      File="/App/tomcat/example/logs/localhost.*.log"
+      Tag="tomcat+example+localhost.log"
+      Severity="info"
+      Facility="local0")

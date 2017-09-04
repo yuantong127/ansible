@@ -1,0 +1,21 @@
+---
+- include_vars: /etc/ansible/vars/main.yml
+
+- name: copy /etc/yum.repos.d/rsyslog.repo
+  copy:
+    src: rsyslog.repo
+    dest: /etc/yum.repos.d/rsyslog.repo
+
+- name: install rsyslog
+  yum:
+    name: rsyslog
+    state: latest
+  notify:
+    - rsyslog restart
+
+- name: copy /etc/rsyslog.d/rsyslog-server.conf
+  template:
+    src: rsyslog-server.conf.j2
+    dest: /etc/rsyslog.d/rsyslog-server.conf
+  notify:
+    - rsyslog restart
