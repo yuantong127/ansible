@@ -1,0 +1,4 @@
+---
+- hosts: tmp
+  roles:
+    - python-3.6-install

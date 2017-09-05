@@ -1,0 +1,35 @@
+---
+- name: copy and unarchive Python-{{python_version}}.tgz
+  unarchive:
+    src: Python-{{python_version}}.tgz
+    dest: /App/src
+
+- name: install dependent packages
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - gcc
+    - openssl-devel
+    - zlib-devel
+
+- name: configure
+  command: ./configure --prefix=/usr/local/python3
+  args:
+    chdir: /App/src/Python-{{python_version}}
+
+- name: make
+  make:
+    chdir: /App/src/Python-{{python_version}}
+
+- name: make install
+  make:
+    chdir: /App/src/Python-{{python_version}}
+    target: install
+
+- name: edit /etc/profile
+  blockinfile:
+    path: /etc/profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: python3"
+    block: export PATH=/usr/local/python3/bin:$PATH
+
