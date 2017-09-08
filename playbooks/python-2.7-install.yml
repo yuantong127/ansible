@@ -1,0 +1,4 @@
+---
+- hosts: tmp
+  roles:
+    - python-2.7-install
