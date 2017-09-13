@@ -1,0 +1,19 @@
+---
+- name: change mode of /data/sa
+  file:
+    path: /data/sa
+    state: directory
+    mode: 0755
+
+- name: copy /App/script/zabbix-sa.sh
+  copy:
+    src: zabbix-sa.sh
+    dest: /App/script/zabbix-sa.sh
+    mode: 0755
+
+- name: add crontab zabbix-sa
+  cron:
+    backup: yes
+    name: zabbix-sa
+    user: sa
+    job: /App/script/zabbix-sa.sh
