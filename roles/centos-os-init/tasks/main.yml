@@ -8,30 +8,22 @@
   hostname:
     name: "{{inventory_hostname}}"
 
-- name: install libselinux-python
+- name: install packages
   yum:
-    name: libselinux-python
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - libselinux-python
+    - vim
 
-- name: install vim
-  yum:
-    name: vim
-    state: latest
-
-- name: create /Apy/src
+- name: create directory
   file:
-    path: /App/src
+    path: "{{ item }}"
     state: directory
-
-- name: create /App/script
-  file:
-    path: /App/script
-    state: directory
-
-- name: create /data
-  file:
-    path: /data
-    state: directory
+  with_items:
+    - /App/src
+    - /App/script
+    - /data
 
 - name: disabled SELinux
   selinux:
@@ -65,12 +57,6 @@
       kernel.sem = 250 32000 100 128
   notify:
     sysctl reload
-
-- name: edit /etc/security/limits.d/90-nproc.conf
-  replace:
-    path: /etc/security/limits.d/90-nproc.conf
-    regexp: " 1024$"
-    replace: " 102400"
 
 - name: edit /etc/security/limits.conf
   blockinfile:
@@ -112,6 +98,9 @@
   yum:
     name: '*'
     state: latest
+
+- include: patch-centos-6.yml
+  when: ansible_distribution_major_version == "6"
 
 - include: patch-aliyun.yml
   when: host_location == "aliyun"
