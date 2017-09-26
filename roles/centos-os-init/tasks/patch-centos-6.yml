@@ -1,0 +1,5 @@
+- name: edit /etc/security/limits.d/90-nproc.conf
+  replace:
+    path: /etc/security/limits.d/90-nproc.conf
+    regexp: " 1024$"
+    replace: " 102400"
