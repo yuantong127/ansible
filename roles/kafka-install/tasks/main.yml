@@ -1,0 +1,36 @@
+---
+- name: copy and unarchive kafka_{{kafka_version}}.tgz
+  unarchive:
+    src: kafka_{{kafka_version}}.tgz
+    dest: /App/src
+
+- name: move to /usr/local/kafka
+  command: mv /App/src/kafka_{{kafka_version}} /usr/local/kafka
+
+- name: link /etc/kafka
+  file:
+    src: /usr/local/kafka/config
+    dest: /etc/kafka
+    state: link
+
+- name: edit /etc/profile
+  blockinfile:
+    path: /etc/profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: kafka"
+    block: |
+      export PATH=/usr/local/kafka/bin:$PATH
+
+- name: edit /etc/rc.local
+  blockinfile:
+    path: /etc/rc.local
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: kafka"
+    block: |
+      source /etc/profile
+      /usr/local/kafka/bin/zookeeper-server-start.sh -daemon /etc/kafka/zookeeper.properties
+      /usr/local/kafka/bin/kafka-server-start.sh -daemon /etc/kafka/server.properties
+
+- name: start zookeeper
+  shell: source /etc/profile; /usr/local/kafka/bin/zookeeper-server-start.sh -daemon /etc/kafka/zookeeper.properties
+
+- name: start kafka
+  shell: source /etc/profile; /usr/local/kafka/bin/kafka-server-start.sh -daemon /etc/kafka/server.properties
