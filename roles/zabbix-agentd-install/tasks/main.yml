@@ -32,3 +32,14 @@
   service:
     name: zabbix_agentd
     enabled: yes
+
+- name: edit /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    regexp: "Defaults    requiretty"
+    line: "# Defaults    requiretty"
+
+- name: copy /etc/sudoers.d/zabbix
+  copy:
+    src: zabbix.sudoer
+    dest: /etc/sudoers.d/zabbix
