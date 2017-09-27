@@ -1,9 +1,14 @@
 ---
 - include_vars: /etc/ansible/vars/main.yml
 
-- name: add user zabbix
+- name: create user zabbix
   user:
     name: zabbix
+
+- name: create directory /etc/zabbix_agentd.conf.d
+  file:
+    path: /etc/zabbix_agentd.conf.d
+    state: directory
 
 - name: copy /etc/zabbix_agentd.conf
   template:

@@ -1,4 +1,5 @@
 ---
 - hosts: tmp
+#  gather_facts: no
   roles:
     - zabbix-agentd-install
