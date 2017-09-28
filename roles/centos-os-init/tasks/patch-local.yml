@@ -1,3 +1,9 @@
+- name: disable iptables
+  service:
+    name: iptables
+    enabled: no
+    state: stopped
+
 - name: copy /etc/resolv.conf
   copy:
     src: resolv.conf
