@@ -8,6 +8,8 @@
 #
 # Mandatory: no
 # Default:
+# PidFile=/tmp/zabbix_agentd.pid
+
 PidFile=/var/run/zabbix/zabbix_agentd.pid
 
 ### Option: LogType
@@ -26,6 +28,7 @@ PidFile=/var/run/zabbix/zabbix_agentd.pid
 # Mandatory: no
 # Default:
 # LogFile=
+
 LogFile=/tmp/zabbix_agentd.log
 
 ### Option: LogFileSize
@@ -66,6 +69,7 @@ LogFile=/tmp/zabbix_agentd.log
 # Mandatory: no
 # Default:
 # EnableRemoteCommands=0
+
 EnableRemoteCommands=1
 
 ### Option: LogRemoteCommands
@@ -80,13 +84,16 @@ EnableRemoteCommands=1
 ##### Passive checks related
 
 ### Option: Server
-#	List of comma delimited IP addresses (or hostnames) of Zabbix servers.
+#	List of comma delimited IP addresses, optionally in CIDR notation, or hostnames of Zabbix servers.
 #	Incoming connections will be accepted only from the hosts listed here.
-#	If IPv6 support is enabled then '127.0.0.1', '::127.0.0.1', '::ffff:127.0.0.1' are treated equally.
+#	If IPv6 support is enabled then '127.0.0.1', '::127.0.0.1', '::ffff:127.0.0.1' are treated equally and '::/0' will allow any IPv4 or IPv6 address.
+#	'0.0.0.0/0' can be used to allow any IPv4 address.
+#	Example: Server=127.0.0.1,192.168.1.0/24,::1,2001:db8::/32,zabbix.domain
 #
 # Mandatory: no
 # Default:
 # Server=
+
 Server={{zabbix_server_ip}}
 
 ### Option: ListenPort
@@ -127,6 +134,7 @@ Server={{zabbix_server_ip}}
 # Mandatory: no
 # Default:
 # ServerActive=
+
 ServerActive={{zabbix_server_ip}}
 
 ### Option: Hostname
@@ -255,6 +263,7 @@ ServerActive={{zabbix_server_ip}}
 # Mandatory: no
 # Default:
 # Include=
+
 Include=/etc/zabbix_agentd.conf.d/*.conf
 
 # Include=/usr/local/etc/zabbix_agentd.userparams.conf

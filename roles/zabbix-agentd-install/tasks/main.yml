@@ -5,6 +5,13 @@
   user:
     name: zabbix
 
+- name: create directory /var/run/zabbix
+  file:
+    path: /var/run/zabbix
+    state: directory
+    owner: zabbix
+    group: zabbix
+
 - name: create directory /etc/zabbix_agentd.conf.d
   file:
     path: /etc/zabbix_agentd.conf.d
