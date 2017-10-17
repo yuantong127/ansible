@@ -27,11 +27,9 @@ SERVICE="Zabbix agent"
 DAEMON=/usr/local/sbin/zabbix_agentd
 CONF=/etc/zabbix_agentd.conf
 PIDFILE=/var/run/zabbix/zabbix_agentd.pid
-PIDDIR=/var/run/zabbix
 
 case $1 in
   'start')
-    [ ! -d "${PIDDIR}" ] && install -o zabbix -g zabbix -d ${PIDDIR}
     if [ -x ${DAEMON} ]
     then
       $DAEMON -c ${CONF}
