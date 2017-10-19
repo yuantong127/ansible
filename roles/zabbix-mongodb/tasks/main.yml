@@ -1,0 +1,18 @@
+---
+- name: install dependent packages
+  yum:
+    name: jq
+    state: present
+
+- name: copy /etc/zabbix_agentd.conf.d/userparameter_mongodb.conf
+  copy:
+    src: userparameter_mongodb.conf
+    dest: /etc/zabbix_agentd.conf.d/userparameter_mongodb.conf
+  notify:
+    - zabbix_agentd restart
+
+- name: copy /usr/local/bin/mongodb.sh
+  copy:
+    src: mongodb.sh
+    dest: /usr/local/bin/mongodb.sh
+    mode: 0755
