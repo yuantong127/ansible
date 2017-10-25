@@ -16,6 +16,11 @@
     - libselinux-python
     - vim
 
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
 - name: create directory
   file:
     path: "{{ item }}"
@@ -93,11 +98,6 @@
     block: |
       alias grep='grep --color=auto'
       export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S"
-
-- name: upgrade all packages
-  yum:
-    name: '*'
-    state: latest
 
 - include: patch-centos-6.yml
   when: ansible_distribution_major_version == "6"
