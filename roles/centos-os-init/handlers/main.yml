@@ -5,4 +5,4 @@
     state: restarted
 
 - name: sysctl reload
-  command: sysctl -p
+  command: sysctl -e -p
