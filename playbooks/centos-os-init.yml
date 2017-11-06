@@ -2,6 +2,3 @@
 - hosts: tmp
   roles:
     - centos-os-init
-  post_tasks:
-    - name: reboot
-      shell: init 6
