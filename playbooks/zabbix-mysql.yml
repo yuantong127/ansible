@@ -1,0 +1,4 @@
+---
+- hosts: tmp
+  roles:
+    - zabbix-mysql

@@ -1,0 +1,22 @@
+---
+- name: get path of mysql
+  shell: source /etc/profile && which mysql
+  register: path_mysql
+
+- name: get path of mysqladmin
+  shell: source /etc/profile && which mysqladmin
+  register: path_mysqladmin
+
+- name: copy /etc/zabbix_agentd.conf.d/.my.cnf
+  copy:
+    src: .my.cnf
+    dest: /etc/zabbix_agentd.conf.d/.my.cnf
+  notify:
+    - zabbix_agentd restart
+
+- name: copy /etc/zabbix_agentd.conf.d/userparameter_mysql.conf
+  template:
+    src: userparameter_mysql.conf.j2
+    dest: /etc/zabbix_agentd.conf.d/userparameter_mysql.conf
+  notify:
+    - zabbix_agentd restart
