@@ -3,6 +3,14 @@
     name: iptables
     enabled: no
     state: stopped
+  when: ansible_distribution_major_version == "6"
+
+- name: disable firewalld
+  systemd:
+    name: firewalld
+    enabled: no
+    state: stopped
+  when: ansible_distribution_major_version == "7"
 
 - name: copy /etc/resolv.conf
   copy:
