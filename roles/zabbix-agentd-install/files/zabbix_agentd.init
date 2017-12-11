@@ -26,12 +26,17 @@
 SERVICE="Zabbix agent"
 DAEMON=/usr/local/sbin/zabbix_agentd
 CONF=/etc/zabbix_agentd.conf
-PIDFILE=/var/run/zabbix/zabbix_agentd.pid
+PIDDIR=/var/run/zabbix
+PIDFILE=${PIDDIR}/zabbix_agentd.pid
 
 case $1 in
   'start')
     if [ -x ${DAEMON} ]
     then
+      if [ ! -d ${PIDDIR} ]
+      then
+        install -d -g zabbix -o zabbix ${PIDDIR}
+      fi
       $DAEMON -c ${CONF}
       # Error checking here would be good...
       echo "${SERVICE} started."
