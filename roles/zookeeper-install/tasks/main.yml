@@ -28,7 +28,7 @@
 - name: edit /usr/local/zookeeper/conf/zoo.cfg
   lineinfile:
     path: /usr/local/zookeeper/conf/zoo.cfg
-    regexp: "dataDir"
+    regexp: "dataDir="
     line: "dataDir=/data/zookeeper"
 
 - name: edit /etc/rc.local
