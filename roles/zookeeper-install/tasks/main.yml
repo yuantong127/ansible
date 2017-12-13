@@ -1,0 +1,43 @@
+---
+- name: copy and unarchive zookeeper-{{zookeeper_version}}.tar.gz
+  unarchive:
+    src: zookeeper-{{zookeeper_version}}.tar.gz
+    dest: /App/src
+
+- name: move to /usr/local/
+  command: mv /App/src/zookeeper-{{zookeeper_version}} /usr/local/zookeeper
+
+- name: edit /etc/profile
+  blockinfile:
+    path: /etc/profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: zookeeper"
+    block: |
+      export PATH=/usr/local/zookeeper/bin:$PATH
+
+- name: create directory /data/zookeeper
+  file:
+    path: /data/zookeeper
+    state: directory
+
+- name: copy /usr/local/zookeeper/conf/zoo.cfg
+  copy:
+    src: /usr/local/zookeeper/conf/zoo_sample.cfg
+    dest: /usr/local/zookeeper/conf/zoo.cfg
+    remote_src: yes
+
+- name: edit /usr/local/zookeeper/conf/zoo.cfg
+  lineinfile:
+    path: /usr/local/zookeeper/conf/zoo.cfg
+    regexp: "dataDir"
+    line: "dataDir=/data/zookeeper"
+
+- name: edit /etc/rc.local
+  blockinfile:
+    path: /etc/rc.local
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: zookeeper"
+    block: |
+      source /etc/profile
+      cd /usr/local/zookeeper && ./bin/zkServer.sh start
+
+- name: start zookeeper
+  shell: source /etc/profile; cd /usr/local/zookeeper && ./bin/zkServer.sh start 
