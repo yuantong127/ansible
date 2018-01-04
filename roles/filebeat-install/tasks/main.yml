@@ -1,0 +1,23 @@
+---
+- name: copy and unarchive filebeat-{{filebeat_version}}.tar.gz
+  unarchive:
+    src: filebeat-{{filebeat_version}}.tar.gz
+    dest: /App/src
+
+- name: move to /usr/local/filebeat
+  command: mv /App/src/filebeat-{{filebeat_version}} /usr/local/filebeat
+
+- name: backup /usr/local/filebeat/filebeat.yml
+  shell: mv /usr/local/filebeat/filebeat.yml /usr/local/filebeat/filebeat.yml.org
+
+- name: copy /usr/local/filebeat/filebeat.yml
+  copy:
+    src: filebeat.yml
+    dest: /usr/local/filebeat
+
+- name: edit /etc/rc.local
+  blockinfile:
+    path: /etc/rc.local
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: filebeat"
+    block: |
+      cd /usr/local/filebeat/ && nohup ./filebeat >> /tmp/filebeat.log 2>&1 &

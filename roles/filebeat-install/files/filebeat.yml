@@ -1,0 +1,31 @@
+fields_under_root: true
+fields:
+  deployment: test
+
+filebeat.prospectors:
+- type: log
+  paths:
+    - /App/tomcat/example/logs/catalina.out
+  tail_files: true
+  fields_under_root: true
+  fields:
+    project: example
+    log_format: none
+    log_name: catalina.out
+
+- type: log
+  paths:
+    - /App/tomcat/example/logs/localhost.*.log
+  multiline.pattern: '^\s|^[A-Za-z]'
+  multiline.match: after
+  tail_files: true
+  fields_under_root: true
+  fields:
+    project: example
+    log_format: datatime-level-thread-class-content
+    log_name: localhost...log
+
+output.kafka:
+  hosts: ["elk-kafka-1:9092"]
+  topic: filebeat
+  version: 0.10.2.1
