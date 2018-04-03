@@ -15,6 +15,7 @@
   with_items:
     - libselinux-python
     - vim
+    - wget
 
 - name: upgrade all packages
   yum:
@@ -26,8 +27,6 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - /App/src
-    - /App/script
     - /data
 
 - name: disabled SELinux
@@ -96,16 +95,10 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK: os init"
     block: |
       alias grep='grep --color=auto'
-      export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S"
+      export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S "
 
 - include: patch-centos-6.yml
   when: ansible_distribution_major_version == "6"
-
-- include: patch-aliyun.yml
-  when: host_location == "aliyun"
-
-- include: patch-jushita.yml
-  when: host_location == "jushita"
 
 - include: patch-local.yml
   when: host_location == "local"
