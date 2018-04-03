@@ -1,7 +1,0 @@
----
-- name: zabbix-thrift.py restart
-#  shell: 'pid=`ps -ef | grep /App/script/zabbix-thrift.py | grep -v grep | awk "{print \\$2}"`; [ ! -z "$pid" ] && kill $pid; nohup python -u /App/script/zabbix-thrift.py >> /tmp/zabbix-thrift.log 2>&1 &'
-  shell: |
-    pid=`ps -ef | grep /App/script/zabbix-thrift.py | grep -v grep | awk "{print \\$2}"`
-    [ ! -z "$pid" ] && kill $pid
-    nohup python -u /App/script/zabbix-thrift.py >> /tmp/zabbix-thrift.log 2>&1 &
