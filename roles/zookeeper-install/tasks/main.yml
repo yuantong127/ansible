@@ -2,10 +2,10 @@
 - name: copy and unarchive zookeeper-{{zookeeper_version}}.tar.gz
   unarchive:
     src: zookeeper-{{zookeeper_version}}.tar.gz
-    dest: /App/src
+    dest: /usr/local/src
 
 - name: move to /usr/local/
-  command: mv /App/src/zookeeper-{{zookeeper_version}} /usr/local/zookeeper
+  command: mv /usr/local/src/zookeeper-{{zookeeper_version}} /usr/local/zookeeper
 
 - name: edit /etc/profile
   blockinfile:

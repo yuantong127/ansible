@@ -2,10 +2,10 @@
 - name: copy and unarchive jdk-{{jdk_version_tar}}.tar.gz
   unarchive:
     src: jdk-{{jdk_version_tar}}.tar.gz
-    dest: /App/src
+    dest: /usr/local/src
 
 - name: move to /usr/local/jdk
-  command: mv /App/src/jdk{{jdk_version}} /usr/local/jdk
+  command: mv /usr/local/src/jdk{{jdk_version}} /usr/local/jdk
 
 - name: edit /etc/profile
   blockinfile:
