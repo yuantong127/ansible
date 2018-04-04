@@ -1,6 +1,17 @@
 ---
 - include_vars: /etc/ansible/vars/main.yml
 
+- name: disable SELinux
+  selinux:
+    state: disabled
+
+- name: disable NetworkManager
+  systemd:
+    name: NetworkManager
+    enabled: no
+    state: stopped
+  when: ansible_distribution_major_version == "7"
+
 - include_tasks: patch-local-pre.yml
   when: host_location == "local"
 
@@ -28,10 +39,6 @@
     state: directory
   with_items:
     - /data
-
-- name: disabled SELinux
-  selinux:
-    state: disabled
 
 - name: edit /etc/sysctl.conf
   blockinfile:
