@@ -1,4 +1,0 @@
----
-- hosts: tmp
-  roles:
-    - zabbix-sa
