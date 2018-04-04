@@ -31,13 +31,18 @@
     regexp: "dataDir="
     line: "dataDir=/data/zookeeper"
 
-- name: edit /etc/rc.local
+- name: edit /etc/rc.d/rc.local
   blockinfile:
-    path: /etc/rc.local
+    path: /etc/rc.d/rc.local
     marker: "# {mark} ANSIBLE MANAGED BLOCK: zookeeper"
     block: |
       source /etc/profile
       cd /usr/local/zookeeper && ./bin/zkServer.sh start
+
+- name: change /etc/rc.d/rc.local mode
+  file:
+    path: /etc/rc.d/rc.local
+    mode: 755
 
 - name: start zookeeper
   shell: source /etc/profile; cd /usr/local/zookeeper && ./bin/zkServer.sh start 
