@@ -21,7 +21,7 @@
 - name: copy and unarchive mysql-{{mysql_version}}.tar.gz
   unarchive:
     src: mysql-{{mysql_version}}.tar.gz
-    dest: /App/src
+    dest: /usr/local/src
 
 - name: configure
   command: |
@@ -34,15 +34,15 @@
     -DSYSCONFDIR=/etc \
     -DWITH_PARTITION_STORAGE_ENGINE=1
   args:
-    chdir: /App/src/mysql-{{mysql_version}}
+    chdir: /usr/local/src/mysql-{{mysql_version}}
 
 - name: make
   make:
-    chdir: /App/src/mysql-{{mysql_version}}
+    chdir: /usr/local/src/mysql-{{mysql_version}}
 
 - name: make install
   make:
-    chdir: /App/src/mysql-{{mysql_version}}
+    chdir: /usr/local/src/mysql-{{mysql_version}}
     target: install
 
 - name: edit /etc/profile
@@ -91,7 +91,7 @@
 
 - name: copy /etc/init.d/mysqld
   copy: 
-    remote_src: True
+    remote_src: yes
     src: /usr/local/mysql/support-files/mysql.server
     dest: /etc/init.d/mysqld
     mode: 0755
