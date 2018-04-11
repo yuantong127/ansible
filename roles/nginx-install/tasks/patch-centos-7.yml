@@ -1,0 +1,11 @@
+- name: copy /usr/lib/systemd/system/nginx.service
+  copy:
+    src: nginx.service
+    dest: /usr/lib/systemd/system/
+
+- name: enable and start nginx.service
+  systemd:
+    name: nginx.service
+    enabled: yes
+    state: started
+    daemon_reload: yes

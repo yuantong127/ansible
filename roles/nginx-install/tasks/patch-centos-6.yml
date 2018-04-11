@@ -1,0 +1,15 @@
+- name: copy /etc/init.d/nginxd
+  copy:
+    src: nginxd
+    dest: /etc/init.d/nginxd
+    mode: 0755
+
+- name: enable service nginxd
+  service:
+    name: nginxd
+    enabled: yes
+
+- name: restart service nginxd
+  service:
+    name: nginxd
+    state: restarted

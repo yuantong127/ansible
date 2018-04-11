@@ -17,20 +17,20 @@
 - name: copy and unarchive nginx-{{nginx_version}}.tar.gz
   unarchive:
     src: nginx-{{nginx_version}}.tar.gz
-    dest: /App/src
+    dest: /usr/local/src
 
 - name: configure
   command: ./configure --prefix=/usr/local/nginx --with-http_ssl_module --with-http_stub_status_module
   args:
-    chdir: /App/src/nginx-{{nginx_version}}
+    chdir: /usr/local/src/nginx-{{nginx_version}}
 
 - name: make
   make:
-    chdir: /App/src/nginx-{{nginx_version}}
+    chdir: /usr/local/src/nginx-{{nginx_version}}
 
 - name: make install
   make:
-    chdir: /App/src/nginx-{{nginx_version}}
+    chdir: /usr/local/src/nginx-{{nginx_version}}
     target: install
 
 - name: edit /etc/profile
@@ -72,18 +72,8 @@
     owner: nginx
     group: nginx
 
-- name: copy /etc/init.d/nginxd
-  copy:
-    src: nginxd
-    dest: /etc/init.d/nginxd
-    mode: 0755
+- include_tasks: patch-centos-6.yml
+  when: ansible_distribution_major_version == "6"
 
-- name: enable service nginxd
-  service:
-    name: nginxd
-    enabled: yes
-
-- name: restart service nginxd
-  service:
-    name: nginxd
-    state: restarted
+- include_tasks: patch-centos-7.yml
+  when: ansible_distribution_major_version == "7"
