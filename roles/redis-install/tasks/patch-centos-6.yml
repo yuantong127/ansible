@@ -1,0 +1,8 @@
+- name: edit /etc/rc.local
+  blockinfile:
+    path: /etc/rc.local
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: redis"
+    block: "/usr/local/redis/src/redis-server /etc/redis.conf"
+
+- name: start redis
+  command: /usr/local/redis/src/redis-server /etc/redis.conf

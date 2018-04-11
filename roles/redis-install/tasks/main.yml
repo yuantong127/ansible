@@ -1,11 +1,18 @@
 ---
+- name: install dependent packages
+  yum:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - gcc
+
 - name: copy and unarchive redis-{{redis_version}}.tar.gz
   unarchive:
     src: redis-{{redis_version}}.tar.gz
-    dest: /App/src
+    dest: /usr/local/src
 
 - name: move to /usr/local/redis
-  command: mv /App/src/redis-{{redis_version}} /usr/local/redis
+  command: mv /usr/local/src/redis-{{redis_version}} /usr/local/redis
 
 - name: make
   make:
@@ -56,14 +63,11 @@
     path: /data/redis
     state: directory
 
-- name: edit /etc/rc.local
-  blockinfile:
-    path: /etc/rc.local
-    marker: "# {mark} ANSIBLE MANAGED BLOCK: redis"
-    block: "/usr/local/redis/src/redis-server /etc/redis.conf"
+- include_tasks: patch-centos-6.yml
+  when: ansible_distribution_major_version == "6"
 
-- name: start redis
-  command: /usr/local/redis/src/redis-server /etc/redis.conf
+- include_tasks: patch-centos-7.yml
+  when: ansible_distribution_major_version == "7"
 
 - name: "print password !!!"
   debug:

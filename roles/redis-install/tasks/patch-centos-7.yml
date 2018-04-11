@@ -1,0 +1,11 @@
+- name: copy /usr/lib/systemd/system/redis.service
+  copy:
+    src: redis.service
+    dest: /usr/lib/systemd/system/
+
+- name: enable and start redis.service
+  systemd:
+    name: redis.service
+    enabled: yes
+    state: started
+    daemon_reload: yes

@@ -1,0 +1,10 @@
+[Unit]
+Description=Redis
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/redis/src/redis-server /etc/redis.conf
+
+[Install]
+WantedBy=multi-user.target
