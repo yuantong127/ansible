@@ -2,7 +2,7 @@
 - name: copy and unarchive Python-{{python_version}}.tgz
   unarchive:
     src: Python-{{python_version}}.tgz
-    dest: /App/src
+    dest: /usr/local/src
 
 - name: install dependent packages
   yum:
@@ -16,15 +16,15 @@
 - name: configure
   command: ./configure --prefix=/usr/local/python3
   args:
-    chdir: /App/src/Python-{{python_version}}
+    chdir: /usr/local/src/Python-{{python_version}}
 
 - name: make
   make:
-    chdir: /App/src/Python-{{python_version}}
+    chdir: /usr/local/src/Python-{{python_version}}
 
 - name: make install
   make:
-    chdir: /App/src/Python-{{python_version}}
+    chdir: /usr/local/src/Python-{{python_version}}
     target: install
 
 - name: edit /etc/profile
