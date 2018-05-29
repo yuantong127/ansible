@@ -1,2 +1,0 @@
-- name: edit /etc/resolv.conf temporary
-  shell: echo 'nameserver 114.114.114.114' > /etc/resolv.conf

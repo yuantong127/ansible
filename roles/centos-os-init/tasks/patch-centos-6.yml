@@ -3,3 +3,9 @@
     path: /etc/security/limits.d/90-nproc.conf
     regexp: " 1024$"
     replace: " 102400"
+
+- name: disable iptables
+  service:
+    name: iptables
+    enabled: no
+    state: stopped
