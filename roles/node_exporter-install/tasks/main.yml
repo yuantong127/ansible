@@ -1,0 +1,37 @@
+---
+- name: add user prometheus
+  user:
+    name: prometheus
+
+- name: copy and unarchive node_exporter-{{node_exporter_version}}.linux-amd64.tar.gz
+  unarchive:
+    src: node_exporter-{{node_exporter_version}}.linux-amd64.tar.gz
+    dest: /usr/local/src
+
+- name: make directory /usr/local/prometheus
+  file:
+    path: /usr/local/prometheus
+    state: directory
+
+- name: move to /usr/local/prometheus/node_exporter
+  command: mv /usr/local/src/node_exporter-{{node_exporter_version}}.linux-amd64 /usr/local/prometheus/node_exporter
+
+- name: change owner and group
+  file:
+    path: /usr/local/prometheus
+    state: directory
+    owner: prometheus
+    group: prometheus
+    recurse: yes
+
+- name: copy /usr/lib/systemd/system/node_exporter.service
+  copy:
+    src: node_exporter.service
+    dest: /usr/lib/systemd/system/
+
+- name: enable and start node_exporter.service
+  systemd:
+    name: node_exporter.service
+    enabled: yes
+    state: started
+    daemon_reload: yes

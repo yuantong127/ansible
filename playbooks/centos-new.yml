@@ -2,7 +2,7 @@
 - hosts: tmp
   roles:
     - centos-os-init
-    - zabbix-agentd-install
+    - node_exporter-install
   post_tasks:
     - name: reboot
       shell: init 6

@@ -1,0 +1,4 @@
+---
+- hosts: tmp
+  roles:
+    - node_exporter-install

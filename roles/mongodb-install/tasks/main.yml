@@ -1,0 +1,48 @@
+---
+- name: add user mongodb
+  user:
+    name: mongodb
+
+- name: copy and unarchive mongodb-{{mongodb_version}}.tgz
+  unarchive:
+    src: mongodb-{{mongodb_version}}.tgz
+    dest: /usr/local/src
+
+- name: move to /usr/local/mongodb
+  command: mv /usr/local/src/mongodb-{{mongodb_version}} /usr/local/mongodb
+
+- name: edit /etc/profile
+  blockinfile:
+    path: /etc/profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: mongodb"
+    block: export PATH=/usr/local/mongodb/bin:$PATH
+
+- name: create directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: mongodb
+    group: mongodb
+  with_items:
+    - /data/mongodb/conf
+    - /data/mongodb/data
+    - /data/mongodb/log
+
+
+
+- name: copy /data/mongodb/conf/mongodb.yml
+  copy:
+    src: mongodb.yml
+    dest: /data/mongodb/conf/mongodb.yml
+
+- name: copy /usr/lib/systemd/system/mongodb.service
+  copy:
+    src: mongodb.service
+    dest: /usr/lib/systemd/system/
+
+- name: enable and start mongodb.service
+  systemd:
+    name: mongodb.service
+    enabled: yes
+    state: started
+    daemon_reload: yes

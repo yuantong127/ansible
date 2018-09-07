@@ -1,0 +1,11 @@
+systemLog:
+    destination: file
+    path: /data/mongodb/log/mongodb.log
+    logAppend: true
+storage:
+    dbPath: /data/mongodb/data/
+processManagement:
+    fork: true
+net:
+    bindIp: 0.0.0.0
+    port: 27017

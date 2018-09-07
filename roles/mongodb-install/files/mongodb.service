@@ -1,0 +1,12 @@
+[Unit]
+Description=MongoDB
+After=network.target
+
+[Service]
+User=mongodb
+Type=forking
+ExecStart=/usr/local/mongodb/bin/mongod -f /data/mongodb/conf/mongodb.yml
+ExecStop=/usr/local/mongodb/bin/mongod --shutdown -f /data/mongodb/conf/mongodb.yml
+
+[Install]
+WantedBy=multi-user.target
