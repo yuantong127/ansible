@@ -8,13 +8,8 @@ server {
 
 	location / {
 		proxy_pass http://backend;
-		proxy_read_timeout 90s;
-		proxy_buffer_size 16k;
-		proxy_buffers 4 16k;
-		proxy_next_upstream error;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header Host $http_host;
-		client_max_body_size 50m;
 	}
 
 	access_log /var/log/nginx/access_www.example.com.log main;
